@@ -5,11 +5,17 @@
 package it.polito.tdp.borders;
 
 import java.net.URL;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.borders.model.Country;
 import it.polito.tdp.borders.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -30,6 +36,12 @@ public class BordersController {
 	private TextArea txtResult; // Value injected by FXMLLoader
 
 	@FXML
+    private ComboBox<String> cbStato;
+
+    @FXML
+    private Button btnRaggiungibili;
+	
+	@FXML
 	void doCalcolaConfini(ActionEvent event) {
 		String stringYear = txtAnno.getText();
 		try {
@@ -45,6 +57,11 @@ public class BordersController {
 			return;
 		}
 	}
+	
+	@FXML
+    void doFindRaggiungibili(ActionEvent event) {
+		
+    }
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
@@ -54,5 +71,10 @@ public class BordersController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		List<String> lista = new LinkedList<String>();
+		for(Country c : model.getCountries())
+			lista.add(c.getStateName());
+		lista.sort(new ComparatoreStati());
+		cbStato.getItems().addAll(lista);
 	}
 }

@@ -1,18 +1,16 @@
 package it.polito.tdp.borders.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
+import it.polito.tdp.borders.ComparatoreStati;
 import it.polito.tdp.borders.db.BordersDAO;
 
 public class Model {
@@ -33,13 +31,7 @@ public class Model {
 		grafo = new SimpleGraph<Country, DefaultEdge>(DefaultEdge.class);
 		mappa.clear();
 		//Aggiungo i vertici al grafo 
-		if(countries.size()==0) {
-			//Cerco tutte le nazioni solo se necessario
-			for(Country c : dao.loadAllCountries()) {
-				countries.put(c.getCcode(), c);
-			}
-		}
-		Graphs.addAllVertices(grafo, countries.values());
+		Graphs.addAllVertices(grafo, getCountries());
 		//Aggiungo gli archi
 		List<Border> listaArchi = new LinkedList<Border>(dao.getCountryPairs(anno));
 		for(Border b : listaArchi) {
@@ -49,8 +41,13 @@ public class Model {
 		if(mappa.size()==0)
 			return "Nessuno stato trovato";
 		String result ="";
+		LinkedList<String> risultato = new LinkedList<String>();
 		for(Country c : mappa.keySet()) {
-			result += c.getStateName()+" - "+mappa.get(c)+"\n";
+			risultato.add(c.getStateName()+" - "+mappa.get(c)+"\n");
+		}
+		risultato.sort(new ComparatoreStati());
+		for(String s : risultato) {
+			result += s;
 		}
 		return result;
 	}
@@ -69,6 +66,12 @@ public class Model {
 	}
 	
 	public Collection<Country> getCountries(){
+		if(countries.size()==0) {
+			//Cerco tutte le nazioni solo se necessario
+			for(Country c : dao.loadAllCountries()) {
+				countries.put(c.getCcode(), c);
+			}
+		}
 		return countries.values();
 	}
 
