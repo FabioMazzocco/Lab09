@@ -31,13 +31,28 @@ public class BordersController {
 
 	@FXML
 	void doCalcolaConfini(ActionEvent event) {
-
-		txtResult.setText("Todo!");
+		String stringYear = txtAnno.getText();
+		try {
+			int year = Integer.parseInt(stringYear);
+			if(year<1816 || year>2016) {
+				txtResult.setText("L'anno dev'essere nell'intervallo 1816-2016 (compresi)");
+				return;
+			}
+			String result = model.calcolaRisultato(year);
+			txtResult.setText(result);
+		}catch(NumberFormatException e) {
+			txtResult.setText("Valore dell'anno introdotto non valido, riprova\n");
+			return;
+		}
 	}
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete
 	void initialize() {
 		assert txtAnno != null : "fx:id=\"txtAnno\" was not injected: check your FXML file 'Borders.fxml'.";
 		assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Borders.fxml'.";
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
 	}
 }
