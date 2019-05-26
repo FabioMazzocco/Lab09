@@ -5,7 +5,6 @@
 package it.polito.tdp.borders;
 
 import java.net.URL;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -22,6 +21,7 @@ import javafx.scene.control.TextField;
 public class BordersController {
 
 	Model model;
+	boolean started = false;
 
 	@FXML // ResourceBundle that was given to the FXMLLoader
 	private ResourceBundle resources;
@@ -52,6 +52,7 @@ public class BordersController {
 			}
 			String result = model.calcolaRisultato(year);
 			txtResult.setText(result);
+			started = true;
 		}catch(NumberFormatException e) {
 			txtResult.setText("Valore dell'anno introdotto non valido, riprova\n");
 			return;
@@ -60,7 +61,31 @@ public class BordersController {
 	
 	@FXML
     void doFindRaggiungibili(ActionEvent event) {
-		
+		if(started == false) {
+			txtResult.setText("Selezionare prima un anno\n");
+			return;
+		}
+		String scelta = cbStato.getValue();
+		if(scelta == null) {
+			txtResult.setText("Selezionare prima uno stato!\n");
+			return;
+		}
+		System.out.println(scelta);
+		List<Country> lista = new LinkedList<Country>(model.reachable(scelta));
+//		if(lista.size()==0) {
+//			txtResult.setText("Nessun paese raggingibile da "+scelta+"\n");
+//			return;
+//		}
+//		List<String> resultList = new LinkedList<String>();
+//		for(Country c : lista) {
+//			resultList.add(c.getStateName());
+//		}
+//		resultList.sort(new ComparatoreStati());
+//		txtResult.setText("");
+//		for(String s : resultList) {
+//			txtResult.appendText(s+"\n");
+//		}
+		txtResult.setText(lista.toString());
     }
 
 	@FXML // This method is called by the FXMLLoader when initialization is complete

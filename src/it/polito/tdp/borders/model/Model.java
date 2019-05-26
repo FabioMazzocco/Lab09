@@ -1,5 +1,6 @@
 package it.polito.tdp.borders.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
 
 import it.polito.tdp.borders.ComparatoreStati;
 import it.polito.tdp.borders.db.BordersDAO;
@@ -82,6 +84,26 @@ public class Model {
 				numb++;
 		}
 		return numb;
+	}
+	
+	public List<Country> reachable(String name){
+		List<Country> raggiungibili = new ArrayList<Country>();
+		Country start = findCountryFromName(name);
+		if(start == null) 
+			return raggiungibili;
+		BreadthFirstIterator<Country, DefaultEdge> iter = new BreadthFirstIterator<Country, DefaultEdge>(grafo, start);
+		iter.next();
+		while(iter.hasNext())
+			raggiungibili.add(countries.get(iter.next().getCcode()));
+		return raggiungibili;
+	}
+	
+	public Country findCountryFromName(String name) {
+		for(Country c : countries.values()) {
+			if(c.getStateName().compareTo(name)==0)
+				return c;
+		}
+		return null;
 	}
 
 }
